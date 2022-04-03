@@ -10,20 +10,23 @@ mongoose.connect('mongodb://localhost/urlShortener', {
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 
+//getting data from database
 app.get('/', async (req, res) => {
   const shortUrls = await ShortUrl.find()
   res.render('index', { shortUrls: shortUrls })
 })
 
+//inserting into database
 app.post('/shortUrls', async (req, res) => {
   await ShortUrl.create({ full: req.body.fullUrl })
 
   res.redirect('/')
 })
 
-app.get('/:shortUrl', async (req, res) => {
-  const shortUrl = await ShortUrl.findOne({ short: req.params.shortUrl })
-  if (shortUrl == null) return res.sendStatus(404)
+app.get('/:shortUr', async (req, res) => {
+  const shortUrl = await ShortUrl.findOne({ short: req.params.shortUr })
+  if (shortUrl == null)
+   return res.sendStatus(404)
 
   shortUrl.clicks++
   shortUrl.save()
@@ -31,4 +34,6 @@ app.get('/:shortUrl', async (req, res) => {
   res.redirect(shortUrl.full)
 })
 
-app.listen(process.env.PORT || 5000);
+app.listen(process.env.PORT || 5000,()=>{
+  console.log("server established")
+});
